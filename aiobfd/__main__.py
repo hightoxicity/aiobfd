@@ -15,7 +15,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(
         description='Maintain a BFD session with a remote system')
     parser.add_argument('local', help='Local IP address or hostname')
-    parser.add_argument('remote', help='Remote IP address or hostname')
+    parser.add_argument('remote', nargs='+', help='Remote IP address or hostname')
     family_group = parser.add_mutually_exclusive_group()
     family_group.add_argument('-4', '--ipv4', action='store_const',
                               dest='family', default=socket.AF_UNSPEC,
@@ -64,7 +64,8 @@ def main():
     log_format = '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
     logging.basicConfig(handlers=handlers, format=log_format,
                         level=logging.getLevelName(args.log_level))
-    control = aiobfd.Control(args.local, [args.remote], family=args.family,
+
+    control = aiobfd.Control(args.local, args.remote, family=args.family,
                              passive=args.passive,
                              rx_interval=args.rx_interval*1000,
                              tx_interval=args.tx_interval*1000,
